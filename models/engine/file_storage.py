@@ -2,7 +2,7 @@
 """
 This is the file storage class for AirBnB
 
-This class serializes instances to a JSON file and deserializes JSON file to instances.
+This class serializes instances to JSON files and vice versa.
 """
 
 import json
@@ -18,7 +18,7 @@ import shlex
 
 class FileStorage:
     """
-    This class serializes instances to a JSON file and deserializes JSON file to instances.
+    This class serializes instances to a JSON file and vice versa.
 
     Attributes:
         __file_path (str): path to the JSON file
@@ -33,7 +33,7 @@ class FileStorage:
         Returns a dictionary of objects.
 
         Args:
-            cls (class, optional): class of objects to return. Defaults to None.
+ cls (class, optional): class of objects to return. Defaults to None.
 
         Returns:
             dict: dictionary of objects
