@@ -70,4 +70,37 @@ class FileStorage:
         my_dict = {}
         for key, value in self.__objects.items():
             my_dict[key] = value.to_dict()
-        with open(self.__file_path, 'w', encoding
+        with open(self.__file_path, 'w', encoding="UTF-8") as f:
+            json.dump(my_dict, f)
+
+
+    def reload(self):
+        """
+        Deserialize the file path to JSON file path.
+        """
+        try:
+            with open(self.__file_path, 'r', encoding="UTF-8") as f:
+                for key, value in json.load(f).items():
+                    value = eval(value["__class__"])(**value)
+                    self.__objects[key] = value
+        except FileNotFoundError:
+            pass
+
+
+    def delete(self, obj=None):
+        """
+        Delete an existing element.
+
+        Args:
+            obj (object, optional): object to delete. Defaults to None.
+        """
+        if obj:
+            key = "{}.{}".format(type(obj).__name__, obj.id)
+            del self.__objects[key]
+
+
+    def close(self):
+        """
+        Calls reload().
+        """
+        self.reload()
