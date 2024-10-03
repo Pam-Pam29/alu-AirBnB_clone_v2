@@ -40,6 +40,9 @@ def do_deploy(archive_path):
         sudo("rm -rf /data/web_static/current")
 
         sudo('ln -sf {} /data/web_static/current'.format(deploy_path))
+
+        # Restart Nginx
+        sudo("service nginx restart")
     except Exception as err:
         return False
 
