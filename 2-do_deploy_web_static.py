@@ -9,6 +9,7 @@ env.user = "ubuntu"
 env.hosts = ["98.80.123.16", "3.80.121.113"]
 env.key_filename = '~/.ssh/id_rsa'
 
+
 def do_deploy(archive_path):
     """distributes an archive to the web servers"""
     if exists(archive_path) is False:
