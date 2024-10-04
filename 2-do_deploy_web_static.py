@@ -11,35 +11,35 @@ env.hosts = ["98.80.123.16", "3.80.121.113"]
 env.key_filename = '~/.ssh/id_rsa'
 
 def do_deploy(archive_path):
-    if not os.path.exists(archive_path):
-        print("Archive file doesn't exist")
+    """
+    Deploy a compressed archive to a remote server.
+    Args:
+        archive_path (str): The path to the compressed archive.
+    Returns:
+        bool: True if the deployment is successful, False otherwise.
+    """
+
+    if not exists(archive_path):
         return False
 
-    archive_filename = os.path.basename(archive_path)
-    archive_filename_without_extension = os.path.splitext(archive_filename)[0]
+    try:
+        put(archive_path, "/tmp/")
+        file_name = re.search(r'[^/]+$', archive_path).group(0)
+        deploy_path = join("/data/web_static/releases/",
+                           splitext(file_name)[0])
+        sudo("mkdir -p {}".format(deploy_path))
 
-    local_file_path = '/alu-AirBnB_clone_v2/web_static/0-index.html'
-    if not os.path.exists(local_file_path):
-        print("Local file doesn't exist")
+        sudo("tar -xzf /tmp/{} -C {}".format(file_name, deploy_path))
+
+        with cd(deploy_path):
+            sudo("mv web_static/* .")
+            sudo("rm -rf web_static")
+
+        sudo("rm /tmp/{}".format(file_name))
+        sudo("rm -rf /data/web_static/current")
+
+        sudo('ln -sf {} /data/web_static/current'.format(deploy_path))
+    except Exception as err:
         return False
 
-    with Connection(host=env.hosts[0]) as c:
-        c.put(archive_path, '/tmp/' + archive_filename)
-        c.run('mkdir -p /data/web_static/releases/' + archive_filename_without_extension + '/')
-        c.run('tar -xzf /tmp/' + archive_filename + ' -C /data/web_static/releases/' + archive_filename_without_extension + '/')
-        c.run('rm /tmp/' + archive_filename)
-        c.put(local_file_path, '/data/web_static/releases/' + archive_filename_without_extension + '/hbnb_static/0-index.html')
-        c.run('rm -rf /data/web_static/current')
-        c.run('ln -s /data/web_static/releases/' + archive_filename_without_extension + '/ /data/web_static/current')
-
-    with Connection(host=env.hosts[1]) as c:
-        c.put(archive_path, '/tmp/' + archive_filename)
-        c.run('mkdir -p /data/web_static/releases/' + archive_filename_without_extension + '/')
-        c.run('tar -xzf /tmp/' + archive_filename + ' -C /data/web_static/releases/' + archive_filename_without_extension + '/')
-        c.run('rm /tmp/' + archive_filename)
-        c.put(local_file_path, '/data/web_static/releases/' + archive_filename_without_extension + '/hbnb_static/0-index.html')
-        c.run('rm -rf /data/web_static/current')
-        c.run('ln -s /data/web_static/releases/' + archive_filename_without_extension + '/ /data/web_static/current')
-
-    print("New version deployed!")
     return True
