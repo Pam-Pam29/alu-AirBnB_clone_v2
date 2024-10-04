@@ -7,7 +7,7 @@ from os.path import join, exists, splitext
 
 
 env.user = "ubuntu"
-env.hosts = ["54.242.151.219", "54.197.202.252"]
+env.hosts = ["98.80.123.16", "3.80.121.113"]
 env.key_filename = '~/.ssh/id_rsa'
 
 
@@ -40,6 +40,9 @@ def do_deploy(archive_path):
         sudo("rm -rf /data/web_static/current")
 
         sudo('ln -sf {} /data/web_static/current'.format(deploy_path))
+
+        # Restart Nginx
+        sudo("service nginx restart")
     except Exception as err:
         return False
 
