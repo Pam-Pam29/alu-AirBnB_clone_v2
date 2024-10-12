@@ -76,4 +76,4 @@ class FileStorage:
         Deserialize the file path to JSON file path.
         """
         try:
-            with open(self.__file_path, 'r', encoding="UTF
+            with open(self.__file_path, 'r', encoding="UTF)
